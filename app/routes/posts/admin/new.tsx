@@ -1,6 +1,18 @@
 import { Form } from '@remix-run/react';
+import type { ActionFunction } from '@remix-run/server-runtime';
 
 const inputClass = `w-full rounded border border-gray-500 px-2 py-2 font-mono`
+
+export const action: ActionFunction = ({ request }) => {
+  console.log('request:', request)
+
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: '/posts/admin'
+    }
+  })
+}
 
 export default function NewPostRoute() {
   return (
