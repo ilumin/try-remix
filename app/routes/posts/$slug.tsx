@@ -1,29 +1,27 @@
-import { useLoaderData } from '@remix-run/react';
-import type { LoaderFunction } from '@remix-run/server-runtime';
-import { json } from '@remix-run/server-runtime'
+import { marked } from 'marked';
 import { getPost } from '~/models/post.server';
-
-type LoaderData = {
-  post: Awaited<ReturnType<typeof getPost>>
-}
+import { useLoaderData } from '@remix-run/react';
+import { json } from '@remix-run/server-runtime';
+import type { LoaderFunction } from '@remix-run/server-runtime';
 
 export const loader: LoaderFunction = async ({ params }) => {
   const { slug } = params
   if (!slug) return
 
   const post = await getPost(slug)
+  const html = marked(post?.markdown)
 
-  return json({ post })
+  return json({ title: post?.title, html })
 }
 
 export default function PostPage() {
-  const { post } = useLoaderData() as LoaderData
-
-  if (!post) return <>no post</>
+  const { title, html } = useLoaderData()
 
   return (
     <main>
-      <h1>{post.title}</h1>
+      <h1>{title}</h1>
+      <hr />
+      <div dangerouslySetInnerHTML={{ __html: html }} />
     </main>
   )
 }
