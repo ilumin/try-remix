@@ -1,6 +1,7 @@
-import { Link } from '@remix-run/react'
+import { Link, useLoaderData } from '@remix-run/react'
+import { json } from '@remix-run/server-runtime'
 
-export default function PostsPage() {
+export const loader = async () => {
   const posts = [
     {
       slug: 'first-post',
@@ -11,6 +12,13 @@ export default function PostsPage() {
       title: 'Trail Riding with Onewheel',
     },
   ]
+
+  return json({ posts })
+}
+
+
+export default function PostsPage() {
+  const { posts } = useLoaderData()
 
   return (
     <main>
