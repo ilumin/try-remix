@@ -19,6 +19,9 @@ export default function PostsPage() {
   return (
     <main>
       <h1>Posts</h1>
+      <Link to="admin">
+        Admin
+      </Link>
       <ul>
         {posts.map(post => (
           <li key={post.slug}>
