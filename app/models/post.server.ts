@@ -1,14 +1,5 @@
-export async function getPosts() {
-  const posts = [
-    {
-      slug: 'first-post',
-      title: 'First Post',
-    },
-    {
-      slug: 'trail-riding',
-      title: 'Trail Riding with One Wheel',
-    },
-  ]
+import { prisma } from '~/db.server';
 
-  return posts
+export async function getPosts() {
+  return prisma.post.findMany()
 }
