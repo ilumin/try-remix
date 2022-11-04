@@ -16,14 +16,14 @@ type ActionData = {
 export const action: ActionFunction = async ({ request }) => {
   const { title, slug, markdown } = Object.fromEntries(await request.formData())
 
-  const errors = {
+  const errors: ActionData = {
     title: title ? null : 'title is required',
     slug: slug ? null : 'slug is required',
     markdown: markdown ? null : 'markdown is required',
   }
   const hasErrors = Object.values(errors).filter(i => i !== null).length > 0
   if (hasErrors) {
-    return json(errors)
+    return json<ActionData>(errors)
   }
 
   invariant(typeof title === 'string', 'title must be string')
