@@ -1,4 +1,4 @@
-import { Form, useActionData, useLoaderData, useTransition } from '@remix-run/react';
+import { Form, useActionData, useCatch, useLoaderData, useParams, useTransition } from '@remix-run/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
@@ -25,6 +25,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params?.slug || params?.slug === 'new') return json<LoaderData>({})
 
   const post = await getPost(params.slug)
+  if (!post) {
+    throw new Response('Not Found', { status: 404 })
+  }
+
   return json<LoaderData>({ post })
 }
 
@@ -114,4 +118,15 @@ export default function NewPostRoute() {
       </div>
     </Form>
   )
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+  const params = useParams()
+
+  if (caught.status === 404) {
+    return <>Not found: {params?.slug}</>
+  }
+
+  throw new Error("unsupported error");
 }
