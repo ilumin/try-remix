@@ -4,8 +4,9 @@ import { redirect } from '@remix-run/server-runtime';
 
 const inputClass = `w-full rounded border border-gray-500 px-2 py-2 font-mono`
 
-export const action: ActionFunction = ({ request }) => {
-  console.log('request:', request)
+export const action: ActionFunction = async ({ request }) => {
+  const data = Object.fromEntries(await request.formData())
+  console.log('submitted:', data)
 
   return redirect('/posts/admin')
 }
