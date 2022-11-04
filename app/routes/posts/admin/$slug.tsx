@@ -3,7 +3,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
 import invariant from 'tiny-invariant';
-import { createPost, updatePost, getPost } from '~/models/post.server';
+import { createPost, updatePost, getPost, deletePost } from '~/models/post.server';
 import { requireAdminUser } from '~/session.server';
 
 const inputClass = `w-full rounded border border-gray-500 px-2 py-2 font-mono`
@@ -27,7 +27,13 @@ export const action: ActionFunction = async ({ request, params }) => {
   await requireAdminUser(request)
   invariant(params?.slug, 'slug is required')
 
-  const { title, slug, markdown } = Object.fromEntries(await request.formData())
+  const { title, slug, markdown, intent } = Object.fromEntries(await request.formData())
+
+  if (intent === 'delete') {
+    invariant(typeof slug === 'string', 'slug must be string')
+    await deletePost(slug)
+    return redirect('/posts/admin')
+  }
 
   const errors: ActionData = {
     title: title ? null : 'title is required',
@@ -59,6 +65,7 @@ export default function NewPostRoute() {
 
   const isSubmitting = Boolean(transition.submission?.formData.get('intent') === 'create')
   const isUpdating = Boolean(transition.submission?.formData.get('intent') === 'update')
+  const isDeleting = Boolean(transition.submission?.formData.get('intent') === 'delete')
   const isNewPost = !data.post
 
   return (
@@ -81,7 +88,16 @@ export default function NewPostRoute() {
           <textarea name="markdown" id="markdown" cols={30} rows={20} className={inputClass} defaultValue={data.post?.markdown} />
         </label>
       </p>
-      <p>
+      <div className='flex justify-end gap-4'>
+        {!isNewPost && (
+          <button
+            className='rounded bg-red-500 text-white py-2 px-4'
+            name="intent"
+            value="delete"
+          >
+            {isDeleting ? 'Deleting ...' : 'Delete'}
+          </button>
+        )}
         <button
           type="submit"
           name="intent"
@@ -91,7 +107,7 @@ export default function NewPostRoute() {
           {isNewPost && (isSubmitting ? 'Creating ...' : 'Create Post')}
           {!isNewPost && (isUpdating ? 'Updating ...' : 'Update Post')}
         </button>
-      </p>
+      </div>
     </Form>
   )
 }
