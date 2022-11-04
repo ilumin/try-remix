@@ -1,3 +1,4 @@
+import type { Post } from '@prisma/client';
 import { prisma } from '~/db.server';
 
 export async function getPostListings() {
@@ -21,8 +22,10 @@ export async function getPost(slug: string) {
   })
 }
 
-export async function createPost(data: { title: string, slug: string, markdown: string }) {
+export async function createPost(
+  post: Pick<Post, 'title' | 'slug' | 'markdown'>
+) {
   return prisma.post.create({
-    data
+    data: post
   })
 }
