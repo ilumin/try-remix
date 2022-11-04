@@ -14,7 +14,7 @@ export const action: ActionFunction = async ({ request }) => {
     slug: data?.slug ? null : 'slug is required',
     markdown: data?.markdown ? null : 'markdown is required',
   }
-  const hasErrors = Object.values(errors).length > 0
+  const hasErrors = Object.values(errors).filter(i => i !== null).length > 0
   if (hasErrors) {
     return json(errors)
   }
