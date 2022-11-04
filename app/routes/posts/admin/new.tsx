@@ -1,12 +1,13 @@
 import { Form } from '@remix-run/react';
 import type { ActionFunction } from '@remix-run/server-runtime';
 import { redirect } from '@remix-run/server-runtime';
+import { createPost } from '~/models/post.server';
 
 const inputClass = `w-full rounded border border-gray-500 px-2 py-2 font-mono`
 
 export const action: ActionFunction = async ({ request }) => {
   const data = Object.fromEntries(await request.formData())
-  console.log('submitted:', data)
+  await createPost(data)
 
   return redirect('/posts/admin')
 }
