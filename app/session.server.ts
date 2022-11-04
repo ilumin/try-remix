@@ -63,6 +63,15 @@ export async function requireUser(request: Request) {
   throw await logout(request);
 }
 
+export async function requireAdminUser(request: Request) {
+  const user = await requireUser(request)
+  if (user?.email !== 'weco@mailinator.com') {
+    throw await logout(request)
+  }
+
+  return user
+}
+
 export async function createUserSession({
   request,
   userId,
