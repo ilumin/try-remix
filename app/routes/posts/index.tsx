@@ -2,6 +2,7 @@ import { Link, useLoaderData } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime'
 import { getPostListings } from '~/models/post.server'
+import { userOptionalAdminUser } from '~/utils';
 
 type LoaderData = {
   posts: Awaited<ReturnType<typeof getPostListings>>
@@ -15,13 +16,16 @@ export const loader: LoaderFunction = async () => {
 
 export default function PostsPage() {
   const { posts } = useLoaderData() as LoaderData
+  const admin = userOptionalAdminUser()
 
   return (
     <main>
       <h1>Posts</h1>
-      <Link to="admin">
-        Admin
-      </Link>
+      {admin && (
+        <Link to="admin">
+          Admin
+        </Link>
+      )}
       <ul>
         {posts.map(post => (
           <li key={post.slug}>
