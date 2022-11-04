@@ -57,7 +57,9 @@ export default function NewPostRoute() {
   const errors = useActionData() as ActionData
   const transition = useTransition()
 
-  const isSubmitting = Boolean(transition.submission)
+  const isSubmitting = Boolean(transition.submission?.formData.get('intent') === 'create')
+  const isUpdating = Boolean(transition.submission?.formData.get('intent') === 'update')
+  const isNewPost = !data.post
 
   return (
     <Form method="post" key={data.post?.slug || 'new'}>
@@ -82,9 +84,12 @@ export default function NewPostRoute() {
       <p>
         <button
           type="submit"
+          name="intent"
+          value={isNewPost ? 'create' : 'update'}
           className='rounded bg-blue-500 text-white py-2 px-4'
           disabled={isSubmitting}>
-          {isSubmitting ? 'Creating ...' : 'Create Post'}
+          {isNewPost && (isSubmitting ? 'Creating ...' : 'Create Post')}
+          {!isNewPost && (isUpdating ? 'Updating ...' : 'Update Post')}
         </button>
       </p>
     </Form>
