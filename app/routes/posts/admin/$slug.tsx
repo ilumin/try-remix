@@ -30,8 +30,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const { title, slug, markdown, intent } = Object.fromEntries(await request.formData())
 
   if (intent === 'delete') {
-    invariant(typeof slug === 'string', 'slug must be string')
-    await deletePost(slug)
+    await deletePost(params?.slug)
     return redirect('/posts/admin')
   }
 
